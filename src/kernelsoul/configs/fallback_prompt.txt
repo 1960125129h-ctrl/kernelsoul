@@ -1,0 +1,11 @@
+﻿{system_prompt}
+
+当前游戏状态：
+{state_text}
+
+最近对话历史：
+{recent_log}
+
+请作为{character_name}继续剧情。在回复末尾附上一个简短的 JSON 标记，格式如下：
+{"hp":0,"energy":0}
+只需修改有变化的数值。不要添加解释。

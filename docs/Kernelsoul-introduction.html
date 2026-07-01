@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Kernelsoul — AI 角色扮演的确定性引擎</title>
+<style>
+:root{--bg:#f8f9fa;--card:#fff;--accent:#6c5ce7;--accent2:#00b894;--text:#2d3436;--muted:#636e72;--border:#e9ecef;--warn:#e17055;--info:#0984e3;--gold:#fdcb6e;--dark:#1a1a2e;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI','Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);line-height:1.8}
+/* Hero */
+.hero{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);color:#fff;padding:80px 20px 60px;text-align:center}
+.hero h1{font-size:3.2em;margin-bottom:8px;letter-spacing:-2px}
+.hero .sub{font-size:1.3em;opacity:.85;margin-bottom:12px}
+.hero .tagline{font-size:1.1em;opacity:.7;max-width:700px;margin:0 auto}
+.container{max-width:960px;margin:0 auto;padding:0 20px}
+h2{font-size:1.8em;margin:48px 0 20px;color:var(--dark);border-bottom:3px solid var(--accent);padding-bottom:8px}
+h3{font-size:1.3em;margin:28px 0 12px;color:var(--accent)}
+p{margin:12px 0}
+/* panels */
+.panel{background:var(--card);border-radius:12px;padding:24px;margin:20px 0;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.panel.hero-p{background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:#fff;padding:32px;border-radius:16px}
+.panel.hero-p .sub{opacity:.9;font-size:.95em}
+/* metrics */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:20px 0}
+.metric{background:var(--card);border-radius:10px;padding:20px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.metric .v{font-size:2.2em;font-weight:700;color:var(--accent)}
+.metric .l{font-size:.85em;color:var(--muted);margin-top:4px}
+/* grid cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin:20px 0}
+.card{background:var(--card);border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid var(--accent)}
+.card.green{border-left-color:var(--accent2)}
+.card.blue{border-left-color:var(--info)}
+.card.orange{border-left-color:var(--warn)}
+.card h4{font-size:1.1em;margin-bottom:8px;color:var(--accent)}
+.card ul{list-style:none;padding:0}
+.card ul li{padding:4px 0;font-size:.92em}
+.card ul li:before{content:"\2713 ";color:var(--accent2);font-weight:700}
+/* tables */
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.92em}
+th{background:var(--accent);color:#fff;padding:10px 14px;text-align:left;font-weight:600}
+td{padding:10px 14px;border-bottom:1px solid var(--border)}
+tr:hover td{background:#f8f6ff}
+.tag{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.78em;font-weight:600}
+.tag-p{background:#f0edff;color:#6c5ce7}
+.tag-g{background:#e8f8f5;color:#00b894}
+.tag-b{background:#e3f2fd;color:#0984e3}
+.tag-o{background:#fef3e2;color:#e17055}
+/* timeline */
+.timeline{position:relative;padding-left:28px;margin:16px 0}
+.timeline:before{content:"";position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--border)}
+.step{position:relative;margin-bottom:16px}
+.step:before{content:"";position:absolute;left:-22px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid #fff}
+.step .t{font-weight:600;color:var(--accent);font-size:.95em}
+.step .d{font-size:.88em;color:var(--muted)}
+/* code */
+code{background:#f0edff;padding:2px 8px;border-radius:4px;font-size:.88em;color:var(--accent)}
+pre{background:#1a1a2e;color:#e0e0e0;padding:16px;border-radius:8px;overflow-x:auto;font-size:.85em;margin:12px 0}
+/* tabs */
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin:12px 0}
+.tab{background:var(--border);padding:6px 16px;border-radius:6px;font-size:.85em;cursor:default}
+.tab.active{background:var(--accent);color:#fff}
+footer{text-align:center;padding:40px;color:var(--muted);font-size:.85em}
+.highlight{background:linear-gradient(120deg,rgba(108,92,231,.12),rgba(108,92,231,.05));padding:2px 6px;border-radius:4px;font-weight:500}
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+<h1>Kernelsoul</h1>
+<div class="sub">AI 角色扮演的确定性角色引擎</div>
+<div class="tagline">在 LLM 与角色卡之间插入持久化状态层、规则执行层和语义渲染管线——让角色卡从"被阅读的故事"升级为"被执行的程序"。</div>
+</div>
+
+<div class="container">
+
+<!-- ===== 一句话 ===== -->
+<div class="panel hero-p">
+<p><strong>Kernelsoul</strong>（原名 Kernelsoul）是一个面向 AI 角色扮演的开源角色引擎。它不是又一个"前端酒馆"——而是一个位于 LLM 下游的角色操作系统，负责维护角色状态的持久性、执行行为规则的确定性、以及叙事输出的语义表现力。</p>
+</div>
+
+<!-- ===== 指标 ===== -->
+<div class="metrics">
+<div class="metric"><div class="v">5856</div><div class="l">代码行</div></div>
+<div class="metric"><div class="v">20</div><div class="l">Python 模块</div></div>
+<div class="metric"><div class="v">21</div><div class="l">手册章节</div></div>
+<div class="metric"><div class="v">181</div><div class="l">测试用例通过</div></div>
+<div class="metric"><div class="v">9</div><div class="l">版本迭代</div></div>
+</div>
+
+<!-- ===== 问题 ===== -->
+<h2>为什么需要 Kernelsoul？</h2>
+<div class="panel">
+<p>传统的 AI 角色扮演流水线非常简单：</p>
+<pre>角色卡 JSON  →  Prompt 组装  →  LLM  →  输出文本</pre>
+<p>这个模式有三个根本问题：</p>
+<div class="grid">
+<div class="card orange">
+<h4>❌ 角色没有"状态"</h4>
+<p style="font-size:.9em;color:var(--muted)">角色卡是一个静态 JSON 文件。血量、好感度、背包物品——这些在每次对话后都会消失，除非 LLM 自己记在对话历史里（LLM 显然不擅长精确记数字）。结果是角色行为前后不一致。</p>
+</div>
+<div class="card orange">
+<h4>❌ 规则靠"概率"执行</h4>
+<p style="font-size:.9em;color:var(--muted)">"不能出戏"、"保持冷酷"——这些约束写在 character note 里，但 LLM 不一定遵守。10 次对话里大概有 2-3 次它会忽略。</p>
+</div>
+<div class="card orange">
+<h4>❌ 数值状态直接"裸奔"到 prompt</h4>
+<p style="font-size:.9em;color:var(--muted)">"HP: -12"、"mood: 3"这种干瘪数字直接塞进 prompt。缺乏叙事表现力，LLM 被迫自己猜"HP -12 该怎么描述"。</p>
+</div>
+</div>
+<p>Kernelsoul 在每个环节插入了专门的中间层来系统性地解决这些问题。</p>
+</div>
+
+<!-- ===== 架构 ===== -->
+<h2>系统架构</h2>
+<div class="panel">
+<p>Kernelsoul 的流水线：</p>
+<pre>角色卡      →  状态层     →  规则层     →  语义层     →  Prompt → LLM
+(chara_v4)    GameState     DSL 引擎     Semantic     上下文      AI
++ DSL 源码    白名单变量     WHEN-IF-    渲染器        注入
+                           THEN-BECAUSE 轴/Warp/动量</pre>
+<p>引擎由五个逻辑层构成：</p>
+<div class="grid">
+<div class="card">
+<h4>⚙️ 引擎核心层</h4>
+<ul>
+<li>KernelsoulEngine — 主循环/对话管理</li>
+<li>GameState — 强类型游戏状态</li>
+<li>CharacterStateManager — 角色专属变量</li>
+<li>StateManager — 持久化</li>
+</ul>
+</div>
+<div class="card green">
+<h4>📦 角色与规则层</h4>
+<ul>
+<li>CharacterCardLoader — V1-V4 格式加载</li>
+<li>DSLCompiler — SLL 语言解析器</li>
+<li>RuleCompiler — AI 协作规则编译</li>
+<li>ParserEngine — AI 响应解析</li>
+<li>EvolutionTrigger — 规则进化</li>
+</ul>
+</div>
+<div class="card blue">
+<h4>🧠 语义管线层</h4>
+<ul>
+<li>SemanticEngine — 语义轴/Warp/动量/Gram矩阵</li>
+<li>SemanticRenderer — 三模式叙事渲染</li>
+<li>PhraseLibrary — KNN 词库管理</li>
+</ul>
+</div>
+<div class="card">
+<h4>💾 持久化与上下文</h4>
+<ul>
+<li>MemoryManager — 三层分级压缩</li>
+<li>PathResolver — 41 条路径方法</li>
+<li>DraftManager — 草稿与版本管理</li>
+<li>Context — 上下文注入</li>
+</ul>
+</div>
+<div class="card green">
+<h4>🔌 生态集成层</h4>
+<ul>
+<li>PluginManager — 沙箱/钩子系统</li>
+<li>AIBridge — API 桥接</li>
+<li>WorldBookRetriever — 世界书检索</li>
+<li>api_server — gRPC API</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- ===== 核心特性 ===== -->
+<h2>核心特性</h2>
+
+<!-- 特性 1: GameState -->
+<h3>1. 强类型游戏状态（GameState）</h3>
+<div class="panel">
+<p>角色不再是平面 JSON，而是拥有运行时状态的对象。变量有类型约束和读写权限：</p>
+<table>
+<tr><th>字段</th><th>类型</th><th>AI 可写</th><th>初始值</th><th>说明</th></tr>
+<tr><td><code>hp</code></td><td>int</td><td>✅</td><td>150</td><td>生命值</td></tr>
+<tr><td><code>max_hp</code></td><td>int</td><td>❌</td><td>150</td><td>只读上限</td></tr>
+<tr><td><code>mood</code></td><td>int</td><td>✅</td><td>0</td><td>-5 ～ 5</td></tr>
+<tr><td><code>energy</code></td><td>int</td><td>✅</td><td>10</td><td>0 ～ 10</td></tr>
+<tr><td><code>is_alive</code></td><td>bool</td><td>⚠️</td><td>True</td><td>系统保护</td></tr>
+<tr><td><code>inventory</code></td><td>list[str]</td><td>✅</td><td>[]</td><td>背包物品</td></tr>
+<tr><td><code>gold</code></td><td>int</td><td>✅</td><td>100</td><td>金钱</td></tr>
+</table>
+<p>AI 在每次对话响应中通过 JSON 字段 <code>state_changes</code> 修改状态。引擎强制执行范围约束和白名单——不在白名单里的字段 AI 无法写入。</p>
+</div>
+
+<!-- 特性 2: DSL 规则引擎 -->
+<h3>2. 确定性 DSL 规则引擎</h3>
+<div class="panel">
+<p>Kernelsoul 定义了自己的领域特定语言（SLL —— Kernelsoul Logic Language），专门用于描述角色行为规则。规则由 <strong>SLL 编译器</strong>（递归下降解析器）解析为可执行规则集：</p>
+<pre>WHEN hp < 30：
+    IF has_potion：
+        USE potion
+        THEN "她颤抖着摸出一瓶红色药水，用牙齿咬开瓶塞一饮而尽。伤口在缓缓愈合。"
+        BECAUSE "角色处于危险时会使用随身携带的治疗道具"
+    ELSE：
+        THEN "她捂住伤口，咬紧牙关。血从指缝间渗出来。"
+        BECAUSE "角色没有治疗资源时会硬撑"
+
+WHEN is_alive = False：
+    THEN "角色已经无法继续行动了"
+    BECAUSE "死亡状态"
+    BLOCK 所有非检查行动</pre>
+<p>规则引擎在每次回合结束后自动检查所有 WHEN 条件，命中即执行对应的行为——这是<strong>确定性的</strong>，不依赖 LLM 概率性理解。</p>
+</div>
+
+<!-- 特性 3: 语义渲染 -->
+<h3>3. 语义叙事渲染引擎（行业首创）</h3>
+<div class="panel">
+<p>传统的做法是把数值状态直接塞进 prompt："mood: -2, energy: 8"。Kernelsoul 的语义渲染器将其转化为叙事化的状态描述——让 LLM 感受到的是"氛围"而不是"数字"。</p>
+<p>采用三模式设计：</p>
+<table>
+<tr><th>模式</th><th>行为</th><th>适用场景</th></tr>
+<tr><td><span class="tag tag-b">direct</span></td><td>直出数值：HP: 35/150</td><td>调试 / 简洁模式</td></tr>
+<tr><td><span class="tag tag-p">semantic</span></td><td>叙事描述：状态大致良好但已显疲态</td><td>沉浸式 RP</td></tr>
+<tr><td><span class="tag tag-g">hybrid</span></td><td>数值 + 描述混合</td><td>既要可读性又要精确性</td></tr>
+</table>
+<p>底层通过<strong>语义轴</strong>（将游戏变量映射到高维语义空间）、<strong>Warp 函数</strong>（非线性映射）、<strong>Gram 矩阵解耦</strong>（分离正交维度）和<strong>语义动量</strong>（SLERP 插值）实现叙事感知。</p>
+<div class="tabs">
+<span class="tab active">语义轴构建</span>
+<span class="tab">低维子空间投影</span>
+<span class="tab">Warp 函数标定</span>
+<span class="tab">SLERP 动量插值</span>
+</div>
+</div>
+
+<!-- 特性 4: 三层记忆 -->
+<h3>4. 三层分级记忆</h3>
+<div class="panel">
+<p>记忆不是简单地把对话拼接起来——而是按时间跨度和重要性分三层管理：</p>
+<table>
+<tr><th>层级</th><th>轮数</th><th>摘要上限</th><th>触发条件</th></tr>
+<tr><td><span class="tag tag-g">轻量</span></td><td>10 轮</td><td>200 字</td><td>每 5 轮打包</td></tr>
+<tr><td><span class="tag tag-b">深度</span></td><td>50 轮</td><td>2500 字</td><td>8 条轻量 → 合并</td></tr>
+<tr><td><span class="tag tag-p">史诗</span></td><td>200 轮</td><td>5000 字</td><td>32 条深度 → 合并</td></tr>
+</table>
+<p>每次对话引擎只注入当前所需的上下文量：近 10 轮完整记录 + 轻量摘要 + 上一级深度摘要。全程用 LLM 压缩摘要，保持关键信息不丢失。</p>
+</div>
+
+<!-- 特性 5: 决策溯源 -->
+<h3>5. 决策溯源</h3>
+<div class="panel">
+<p>每个决策都有记录。"刚才这个角色为什么突然怒了？"——查询决策日志即可：</p>
+<pre>WHY 角色行为: 
+  → 规则: WHEN mood < -3 → 敌对态度
+  → 状态: mood -5 (hp损失+连续受挫)
+  → 触发: 玩家再次挑衅
+  → 结果: 进入敌对模式, 拔剑</pre>
+<p>这是 <span class="highlight">Kernelsoul 独有的能力</span>——任何竞品都无法追溯 AI 角色行为的原因。</p>
+</div>
+
+<!-- 特性 6: 草稿机制 -->
+<h3>6. 多草稿与版本管理</h3>
+<div class="panel">
+<p>每次用户输入后，引擎可以生成多个候选回复草稿（<code>/roll</code>），用户预览后选择最满意的一条（<code>/select</code>）。可以收藏重要节点，也可以回滚到之前的会话版本。这解决了"一次对话决定永久命运"的问题。</p>
+</div>
+
+<!-- 特性 7: 兼容性 -->
+<h3>7. 角色卡兼容</h3>
+<div class="panel">
+<p>支持 <span class="tag tag-p">chara_card_v4</span> <span class="tag tag-p">chara_card_v2</span> 格式，兼容现有 SillyTavern 生态的角色卡。角色卡中嵌入 DSL 源码字段（<code>character_rules_dsl</code>），让普通角色卡也能享受确定性规则。</p>
+</div>
+
+<!-- 特性 8: 插件系统 -->
+<h3>8. 沙箱插件系统</h3>
+<div class="panel">
+<p>插件有完整的生命周期钩子（init/before_turn/after_turn/cleanup）、权限审查（高风险操作日志记录）、沙箱隔离（异常不影响引擎）。manifest.json 规范注册，支持动态加载/卸载。</p>
+</div>
+
+<!-- ===== 快速上手 ===== -->
+<h2>五分钟快速上手</h2>
+<div class="panel">
+<pre># 1. 安装
+pip install -r requirements.txt
+
+# 2. 配置 API Key（configs/system.json）
+{
+  "api_type": "deepseek",
+  "api_key": "sk-your-key-here",
+  "model": "deepseek-chat",
+  "max_tokens": 4096
+}
+
+# 3. 放入角色卡（characters/ 目录）
+#    - 标准: character.dsl + character_data.json + character_rules.json
+#    - 兼容: 直接放酒馆格式 JSON
+
+# 4. 启动
+python core_engine.py</pre>
+<!--
+<p>进入引擎后：</p>
+<pre>/list            → 列出所有角色
+/switch 角色名    → 切换角色
+/newgame         → 开新会话
+/load 会话id     → 加载存档
+输入对话内容     → AI 响应
+/roll            → 生成多个草稿
+/select N        → 选择草稿N
+/drafts          → 查看草稿历史
+/state            → 查看当前状态
+/help             → 查看全部命令</pre>
+-->
+</div>
+
+<!-- ===== 与竞品对比 ===== -->
+<h2>与竞品的核心差异</h2>
+<div class="panel">
+<p>Kernelsoul 不是又一个"SillyTavern 替代品"——它是一个完全不同层级的项目。竞品解决的是"怎么聊"，Kernelsoul 解决的是"角色怎么像角色"。</p>
+<table>
+<tr><th>维度</th><th>Kernelsoul</th><th>SillyTavern</th></tr>
+<tr><td><strong>定位</strong></td><td><span class="tag tag-p">后端角色引擎</span></td><td><span class="tag tag-b">前端酒馆</span></td></tr>
+<tr><td><strong>角色状态</strong></td><td>强类型 GameState，AI 可控白名单</td><td>无状态，角色是静态 JSON</td></tr>
+<tr><td><strong>规则执行</strong></td><td>确定性 DSL 引擎，回合级条件判断</td><td>纯 prompt 暗示，不可靠</td></tr>
+<tr><td><strong>叙事渲染</strong></td><td>语义轴/Warp/动量/Gram矩阵</td><td>纯数值直出</td></tr>
+<tr><td><strong>DSL 语言</strong></td><td>SLL 递归下降解析器</td><td>无</td></tr>
+<tr><td><strong>决策溯源</strong></td><td>WHY 查询、决策日志</td><td>黑盒 LLM 输出</td></tr>
+<tr><td><strong>记忆管理</strong></td><td>三层分级压缩（10/50/200轮）</td><td>简单摘要 / 向量扩展</td></tr>
+<tr><td><strong>草稿管理</strong></td><td>多草稿 + 收藏 + 版本回滚</td><td>无</td></tr>
+<tr><td><strong>角色格式</strong></td><td>V4 标准 + DSL 源码</td><td>chara_card_v3（事实标准）</td></tr>
+<tr><td><strong>集成方式</strong></td><td>gRPC API / pip 包 / ST 插件</td><td>独立前端</td></tr>
+</table>
+</div>
+
+<!-- ===== 版本时间线 ===== -->
+<h2>版本演进</h2>
+<div class="panel">
+<div class="timeline">
+<div class="step"><span class="t">v1.0 — 基础架构</span><span class="d">GameState、AI 响应协议、CLI 框架</span></div>
+<div class="step"><span class="t">v1.1-1.4 — 核心奠基</span><span class="d">强类型定义、双轨制、PathResolver、分级容错、三段式解析器</span></div>
+<div class="step"><span class="t">v1.5-1.6 — 可用性完善</span><span class="d">记忆锚点、角色卡加载器、草稿收藏、世界书二次检索、Token 预算</span></div>
+<div class="step"><span class="t">v2.0 — Kernelsoul 系统</span><span class="d">character_state、双层规则引擎、决策溯源、元认知预设</span></div>
+<div class="step"><span class="t">v2.1 — DSL 剧本语言</span><span class="d">SLL 语言定义、递归下降解析器、AI 协作编译</span></div>
+<div class="step"><span class="t">v2.3 — 工程化落地</span><span class="d">三条铁律、FileService、Python 全面实现</span></div>
+<div class="step"><span class="t">v2.3.1 — 记忆升级</span><span class="d">轻量+深度+史诗三层压缩、分层合并算法</span></div>
+<div class="step"><span class="t">v2.4 — 语义渲染</span><span class="d">语义叙事渲染引擎：轴/Warp/动量/Gram矩阵/子空间、三模式渲染、KNN 词库</span></div>
+</div>
+</div>
+
+<!-- ===== 技术指标 ===== -->
+<h2>技术指标</h2>
+<div class="panel">
+<div class="grid">
+<div class="card blue">
+<h4>模块组成</h4>
+<ul>
+<li>20 个 Python 模块</li>
+<li>5856 行核心代码</li>
+<li>9 个测试文件</li>
+<li>181 个测试用例</li>
+<li>100% 测试通过率</li>
+</ul>
+</div>
+<div class="card green">
+<h4>语义引擎</h4>
+<ul>
+<li>语义轴构建 ✅</li>
+<li>Gram 矩阵解耦 ✅</li>
+<li>低维子空间投影 ✅</li>
+<li>Warp 函数标定 ✅</li>
+<li>SLERP 动量更新 ✅</li>
+<li>事实签名过滤 ✅</li>
+</ul>
+</div>
+<div class="card">
+<h4>DSL 编译器</h4>
+<ul>
+<li>递归下降解析 ✅</li>
+<li>WHEN/IF/THEN/BECAUSE ✅</li>
+<li>变量系统 ✅</li>
+<li>AI 协作编译 ✅</li>
+<li>决策溯源 ✅</li>
+<li>版本兼容 ✅</li>
+</ul>
+</div>
+<div class="card blue">
+<h4>记忆系统</h4>
+<ul>
+<li>三层分级压缩 ✅</li>
+<li>分层合并算法 ✅</li>
+<li>安全截断机制 ✅</li>
+<li>手动记忆锚点 ✅</li>
+<li>worldbook 融合 ✅</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- ===== 配套资源 ===== -->
+<h2>项目资源</h2>
+<div class="panel">
+<div class="grid">
+<div class="card">
+<h4>📂 代码目录</h4>
+<ul>
+<li><code>D:\V4-Character-OS\in-dev\</code> — 引擎 Python 源码</li>
+<li><code>D:\V4-Character-OS\Kernelsoul-角色引擎开发手册\</code> — 执行手册</li>
+<li><code>D:\Kernelsoul-开源版\</code> — 开源分发目录</li>
+<li><code>D:\V4-Character-OS\评估报告\</code> — 各类分析/评估</li>
+</ul>
+</div>
+<div class="card green">
+<h4>📘 手册章节</h4>
+<ul>
+<li>快速开始 / 设计哲学 / 目录结构</li>
+<li>GameState / AI 响应协议 / 草稿</li>
+<li>PathResolver / 角色卡加载器</li>
+<li>CharacterStateManager / RuleCompiler</li>
+<li>DSL 编译器 / CLI 命令系统</li>
+<li>SLL 脚本语言完整规范</li>
+<li>三层记忆压缩架构</li>
+<li>插件生态 / gRPC API</li>
+<li>语义叙事渲染引擎（第21章）</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- ===== 后续 ===== -->
+<h2>TODO / 下一步</h2>
+<div class="panel">
+<div class="grid">
+<div class="card orange">
+<h4>⚠️ 嵌入层接入</h4>
+<p style="font-size:.9em">语义引擎需要外部 embedding 模型（OpenAI text-embedding-3-small / BGE-Large-ZH）</p>
+</div>
+<div class="card blue">
+<h4>🔜 前端集成</h4>
+<p style="font-size:.9em">SillyTavern 插件是主要通道，需要完善对接</p>
+</div>
+<div class="card">
+<h4>🔜 生态建设</h4>
+<p style="font-size:.9em">插件市场、gRPC API 实现、Unity/Unreal SDK</p>
+</div>
+<div class="card green">
+<h4>🔜 社区文档</h4>
+<p style="font-size:.9em">面向角色创作者的快速入门指南</p>
+</div>
+</div>
+</div>
+
+<footer>
+<p>Kernelsoul 角色引擎 — 2026-07-01 · v2.4</p>
+<p>基于 D:\V4-Character-OS 完整代码与手册</p>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,106 @@
+[
+  {
+    "id": "rule_妖魔_4",
+    "trigger": "玩家辅助猎魔或面对强大妖魔",
+    "trigger_keywords": [
+      "妖魔",
+      "猎杀",
+      "冰霜",
+      "封印",
+      "术式"
+    ],
+    "condition": {
+      "type": "AND",
+      "conditions": [
+        {
+          "type": "lt",
+          "field": "frost_power",
+          "value": 30
+        },
+        {
+          "type": "lt",
+          "field": "exhaustion",
+          "value": 80
+        }
+      ]
+    },
+    "actions": [
+      {
+        "type": "set_variable",
+        "target": "current_tone",
+        "value": "冰冷警告"
+      },
+      {
+        "type": "force_emotion",
+        "target": "emotion",
+        "value": "疲惫但警觉"
+      }
+    ],
+    "description": "WHEN 玩家辅助猎魔或面对强大妖魔",
+    "enabled": true
+  },
+  {
+    "id": "rule_背叛_11",
+    "trigger": "玩家表现出背叛或欺骗",
+    "trigger_keywords": [
+      "背叛",
+      "欺骗",
+      "出卖",
+      "撒谎"
+    ],
+    "condition": {
+      "type": "gt",
+      "field": "trust_bureau",
+      "value": -50
+    },
+    "actions": [
+      {
+        "type": "change_variable",
+        "target": "trust_bureau",
+        "delta": -30
+      },
+      {
+        "type": "set_variable",
+        "target": "current_tone",
+        "value": "冰冷敌意"
+      },
+      {
+        "type": "force_emotion",
+        "target": "emotion",
+        "value": "愤怒"
+      }
+    ],
+    "description": "WHEN 玩家表现出背叛或欺骗",
+    "enabled": true
+  },
+  {
+    "id": "rule_帮助_19",
+    "trigger": "玩家做出善举",
+    "trigger_keywords": [
+      "帮助",
+      "救助",
+      "保护",
+      "善良",
+      "救人"
+    ],
+    "condition": {
+      "type": "lt",
+      "field": "humanity",
+      "value": 80
+    },
+    "actions": [
+      {
+        "type": "change_variable",
+        "target": "humanity",
+        "delta": 10
+      },
+      {
+        "type": "set_variable",
+        "target": "current_tone",
+        "value": "温和"
+      }
+    ],
+    "description": "WHEN 玩家做出善举",
+    "enabled": true
+  }
+]

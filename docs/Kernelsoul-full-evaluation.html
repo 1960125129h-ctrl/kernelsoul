@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Kernelsoul 角色引擎 — 完整评估报告</title>
+<style>
+:root {--bg:#f8f9fa;--card:#fff;--accent:#6c5ce7;--accent2:#00b894;--text:#2d3436;--muted:#636e72;--border:#e9ecef;--warn:#e17055;--info:#0984e3;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI','Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;padding:0}
+.container{max-width:1100px;margin:0 auto;padding:20px}
+header{background:linear-gradient(135deg,#6c5ce7,#a29bfe,#6c5ce7);color:#fff;padding:60px 20px;text-align:center}
+header h1{font-size:2.8em;margin-bottom:10px;letter-spacing:-1px}
+header p{font-size:1.2em;opacity:.9}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:30px 0 10px}
+.metric{background:var(--card);border-radius:12px;padding:24px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.metric .value{font-size:2.4em;font-weight:700;color:var(--accent)}
+.metric .label{font-size:.9em;color:var(--muted);margin-top:4px}
+.metric .sub{font-size:.8em;color:var(--muted);margin-top:2px}
+h2{font-size:1.8em;margin:40px 0 20px;padding-bottom:8px;border-bottom:3px solid var(--accent);color:var(--text)}
+h3{font-size:1.3em;margin:24px 0 12px;color:var(--accent)}
+.panel{background:var(--card);border-radius:12px;padding:24px;margin:16px 0;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;margin:16px 0}
+.card{background:var(--card);border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid var(--accent)}
+.card-title{font-weight:600;font-size:1.1em;margin-bottom:8px;color:var(--accent)}
+.card ul{list-style:none;padding:0}
+.card ul li{padding:4px 0;font-size:.95em}
+.card ul li:before{content:"\2713 ";color:var(--accent2);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.95em}
+th{background:var(--accent);color:#fff;padding:10px 14px;text-align:left;font-weight:600}
+td{padding:10px 14px;border-bottom:1px solid var(--border)}
+tr:hover td{background:#f8f6ff}
+.tag{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.8em;font-weight:600}
+.tag-green{background:#e8f8f5;color:var(--accent2)}
+.tag-purple{background:#f0edff;color:var(--accent)}
+.tag-orange{background:#fef3e2;color:var(--warn)}
+.tag-blue{background:#e3f2fd;color:var(--info)}
+.compare{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.compare-col{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.compare-col h4{font-size:1em;color:var(--accent);margin-bottom:8px;border-bottom:2px solid var(--accent);padding-bottom:4px}
+.compare-col ul{list-style:none;padding:0}
+.compare-col ul li{padding:3px 0;font-size:.9em}
+.compare-col ul li:before{content:"\2714 ";color:var(--accent2)}
+.timeline{position:relative;padding-left:30px;margin:16px 0}
+.timeline:before{content:"";position:absolute;left:10px;top:0;bottom:0;width:2px;background:var(--border)}
+.step{position:relative;margin-bottom:20px}
+.step:before{content:"";position:absolute;left:-24px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid #fff}
+.step-title{font-weight:600;color:var(--accent)}
+.step-text{font-size:.9em;color:var(--muted)}
+footer{text-align:center;padding:40px;color:var(--muted);font-size:.85em}
+.warn{background:#fff3e0;border-radius:8px;padding:12px 16px;margin:12px 0;font-size:.9em;border-left:4px solid var(--warn)}
+.info{background:#e3f2fd;border-radius:8px;padding:12px 16px;margin:12px 0;font-size:.9em;border-left:4px solid var(--info)}
+.flow{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.flow-item{background:var(--accent);color:#fff;padding:6px 14px;border-radius:20px;font-size:.85em;font-weight:500}
+.flow-item.alt{background:var(--accent2)}
+.flow-item.warn{background:var(--warn);color:#fff}
+</style>
+</head>
+<body>
+
+<header>
+<h1>Kernelsoul 角色引擎</h1>
+<p>完整评估报告 — v2.4</p>
+</header>
+
+<div class="container">
+
+<!-- === 指标 === -->
+<div class="metrics">
+<div class="metric"><div class="value">5962</div><div class="label">代码行数</div><div class="sub">21 个模块</div></div>
+<div class="metric"><div class="value">3408</div><div class="label">手册行数</div><div class="sub">100205 字节 / 21 章</div></div>
+<div class="metric"><div class="value">181</div><div class="label">pytest 测试用例</div><div class="sub">9 个测试文件全通</div></div>
+<div class="metric"><div class="value">33</div><div class="label">版本迭代</div><div class="sub">v1.1 → v2.4</div></div>
+</div>
+
+<!-- === 一句话定位 === -->
+<div class="panel">
+<h3>一句话定位</h3>
+<p style="font-size:1.2em;font-weight:500">Kernelsoul 是<strong>面向 AI 角色扮演的确定性角色引擎</strong>——在 LLM 与角色卡之间插入持久化状态层、规则执行层和语义渲染管线，让角色卡从"被阅读的故事"升级为"被执行的程序"。</p>
+</div>
+
+<!-- === 架构总览 === -->
+<h2>一、系统架构总览</h2>
+<div class="panel">
+<p>Kernelsoul 由 <strong>20 个 Python 模块</strong>组成，约 5856 行代码，按职责分层：</p>
+<div class="grid">
+<div class="card">
+<div class="card-title">⚙️ 引擎核心 (1578行)</div>
+<ul>
+<li>KernelsoulEngine — 主循环 & 对话管理</li>
+<li>GameState — 强类型游戏状态</li>
+<li>ConfigManager — 配置管理</li>
+<li>CharacterStateManager — 角色状态</li>
+<li>StateManager — 持久化状态</li>
+</ul>
+</div>
+<div class="card">
+<div class="card-title">🧠 语义管线 (1007行)</div>
+<ul>
+<li>SemanticEngine — 轴/Warp/动量/子空间</li>
+<li>SemanticRenderer — 三模式叙事渲染</li>
+<li>PhraseLibrary — KNN词库管理</li>
+</ul>
+</div>
+<div class="card">
+<div class="card-title">📦 角色与规则 (1070行)</div>
+<ul>
+<li>CharacterCardLoader — V1-V4格式</li>
+<li>DSLCompiler — 递归下降解析器</li>
+<li>RuleCompiler — AI规则编译</li>
+<li>ParserEngine — AI响应解析</li>
+<li>EvolutionTrigger — 进化触发</li>
+</ul>
+</div>
+<div class="card">
+<div class="card-title">💾 持久化 (535行)</div>
+<ul>
+<li>MemoryManager — 三层压缩</li>
+<li>PathResolver — 41路径方法</li>
+<li>DraftManager / SessionMeta</li>
+</ul>
+</div>
+<div class="card">
+<div class="card-title">🔌 生态 (497行)</div>
+<ul>
+<li>PluginManager — 沙箱/钩子</li>
+<li>AIBridge — API桥接</li>
+<li>WorldBookRetriever — 世界书</li>
+<li>api_server — gRPC API</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- === 竞品对比 === -->
+<h2>二、竞品深度对比</h2>
+<div class="panel">
+<p>以下对比涵盖当前 AI 角色扮演领域主要前端平台与 Kernelsoul 的核心差异：</p>
+
+<table>
+<thead>
+<tr><th>对比维度</th><th>Kernelsoul</th><th>SillyTavern</th><th>RisuAI</th><th>Agnai</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>定位</strong></td>
+<td><span class="tag tag-purple">后端引擎</span></td>
+<td><span class="tag tag-orange">前端酒馆</span></td>
+<td><span class="tag tag-orange">前端酒馆</span></td>
+<td><span class="tag tag-orange">前端酒馆</span></td>
+</tr>
+<tr>
+<td><strong>游戏状态</strong></td>
+<td><span class="tag tag-green">强类型 GameState</span><br>int/bool/list 白名单 + AI 可修改字段</td>
+<td><span class="tag tag-blue">无</span><br>角色卡为纯文本 JSON，无运行时状态</td>
+<td><span class="tag tag-blue">无</span><br>靠 prompt 注入变量，无类型定义</td>
+<td><span class="tag tag-blue">无</span><br>角色即静态卡</td>
+</tr>
+<tr>
+<td><strong>规则引擎</strong></td>
+<td><span class="tag tag-green">确定性 DSL</span><br>WHEN/IF/THEN/BECAUSE 语法，回合级条件判断</td>
+<td><span class="tag tag-orange">Prompt 约束</span><br>靠 character note 和 author's note，不可靠</td>
+<td><span class="tag tag-orange">Regex 替换</span><br>字符串模式匹配，无状态感知</td>
+<td><span class="tag tag-blue">无</span><br>纯 prompt 工程</td>
+</tr>
+<tr>
+<td><strong>记忆系统</strong></td>
+<td><span class="tag tag-green">三层分级压缩</span><br>轻量(10轮) / 深度(50轮) / 史诗(200轮)</td>
+<td><span class="tag tag-blue">简单摘要</span><br>向量记忆扩展(需额外配置)</td>
+<td><span class="tag tag-blue">简单摘要</span><br>无分层策略</td>
+<td><span class="tag tag-blue">简单向量检索</span><br>依赖 ChromaDB</td>
+</tr>
+<tr>
+<td><strong>语义渲染</strong></td>
+<td><span class="tag tag-green">多模态嵌入</span><br>direct/semantic/hybrid 三模式，轴/Warp/动量/Gram矩阵</td>
+<td><span class="tag tag-blue">无</span><br>纯数值直出</td>
+<td><span class="tag tag-blue">无</span><br>纯数值直出</td>
+<td><span class="tag tag-blue">无</span><br>纯数值直出</td>
+</tr>
+<tr>
+<td><strong>DSL 脚本</strong></td>
+<td><span class="tag tag-green">SLL 语言</span><br>递归下降解析器，变量/条件/事件系统</td>
+<td><span class="tag tag-blue">无</span><br>JSON 格式角色卡</td>
+<td><span class="tag tag-blue">无</span><br>JSON 格式角色卡</td>
+<td><span class="tag tag-blue">无</span><br>JSON 格式角色卡</td>
+</tr>
+<tr>
+<td><strong>角色格式</strong></td>
+<td><span class="tag tag-purple">Kernelsoul 标准</span><br>chara_card_v4 兼容 + DSL 源码</td>
+<td><span class="tag tag-purple">chara_card_v2</span><br>事实标准格式</td>
+<td><span class="tag tag-purple">chara_card_v2</span><br>兼容 ST 格式</td>
+<td><span class="tag tag-purple">chara_card_v2</span><br>兼容 ST 格式</td>
+</tr>
+<tr>
+<td><strong>插件生态</strong></td>
+<td><span class="tag tag-green">沙箱 + 钩子系统</span><br>生命周期钩子、权限审查、隔离异常</td>
+<td><span class="tag tag-green">扩展系统</span><br>300+ 扩展，行业最大生态</td>
+<td><span class="tag tag-blue">有限扩展</span><br>少数内置扩展</td>
+<td><span class="tag tag-blue">无</span><br>无插件系统</td>
+</tr>
+<tr>
+<td><strong>决策溯源</strong></td>
+<td><span class="tag tag-green">DSL 决策追踪</span><br>WHY 关键字、决策日志</td>
+<td><span class="tag tag-blue">无</span><br>黑盒 LLM 输出</td>
+<td><span class="tag tag-blue">无</span><br>黑盒 LLM 输出</td>
+<td><span class="tag tag-blue">无</span><br>黑盒 LLM 输出</td>
+</tr>
+<tr>
+<td><strong>世界书</strong></td>
+<td><span class="tag tag-green">二次检索</span><br>语义锚点 + 事实签名过滤</td>
+<td><span class="tag tag-green">Lorebook</span><br>关键词匹配触发</td>
+<td><span class="tag tag-green">Lorebook</span><br>关键词匹配触发</td>
+<td><span class="tag tag-green">历史 / 百科</span><br>混合检索</td>
+</tr>
+<tr>
+<td><strong>草稿机制</strong></td>
+<td><span class="tag tag-green">多草稿 + 收藏</span><br>/roll /select /drafts 完整流程</td>
+<td><span class="tag tag-blue">无</span><br>单次生成</td>
+<td><span class="tag tag-blue">无</span><br>单次生成</td>
+<td><span class="tag tag-blue">无</span><br>单次生成</td>
+</tr>
+<tr>
+<td><strong>容错策略</strong></td>
+<td><span class="tag tag-green">分级容错</span><br>JSON 解析 3 次重试 → fallback prompt → 回退</td>
+<td>有限</td><td>有限</td><td>有限</td>
+</tr>
+<tr>
+<td><strong>SDK/API</strong></td>
+<td><span class="tag tag-purple">gRPC + pip 包</span><br>Unity/Unreal/Custom 集成规划</td>
+<td>HTTP API</td>
+<td>HTTP API</td>
+<td>HTTP API</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- === 核心优势 === -->
+<h2>三、Kernelsoul 核心竞争优势</h2>
+
+<div class="grid">
+<div class="card" style="border-left-color:#00b894">
+<div class="card-title"><span style="font-size:1.2em">🎯</span> 唯一确定性角色引擎</div>
+<p style="font-size:.9em;color:var(--muted)">所有竞品都是"前端对话界面"，Kernelsoul 是唯一自带<a href="https://github.com/Kernelsoul-Character-OS/Kernelsoul" target="_blank">强类型状态机</a> + 确定性规则执行器的项目。GameState 的 int/bool/list 白名单机制让角色行为不再是概率性 prompt 暗示，而是回合级强制执行的规则。</p>
+</div>
+<div class="card" style="border-left-color:#0984e3">
+<div class="card-title"><span style="font-size:1.2em">🧠</span> 语义渲染管线（行业首创）</div>
+<p style="font-size:.9em;color:var(--muted)">语义叙事渲染引擎（第21章）通过语义轴、Warp函数、Gram矩阵解耦读数，将 GameState 数值映射为叙事描述性短语。这在所有 AI RP 平台中是 <strong>首创功能</strong>——竞品只有"数值直出"一种模式。</p>
+</div>
+<div class="card" style="border-left-color:#e17055">
+<div class="card-title"><span style="font-size:1.2em">📜</span> SLL 剧本语言</div>
+<p style="font-size:.9em;color:var(--muted)">Kernelsoul 定义了<strong>Kernelsoul Logic Language</strong>（SLL），一个专门面向角色行为规则的 DSL。递归下降解析器直接将其编译为可执行规则，不需要 LLM 在每次对话时重新理解角色行为边界。</p>
+</div>
+<div class="card" style="border-left-color:#6c5ce7">
+<div class="card-title"><span style="font-size:1.2em">🧩</span> 决策溯源能力</div>
+<p style="font-size:.9em;color:var(--muted)">唯一支持"WHY"关键字查询决策原因的系统。用户可以查看角色某次行为触发的具体规则、状态变化链路。这在 LLM 黑盒输出时代提供了关键的<strong>可解释性</strong>。</p>
+</div>
+<div class="card" style="border-left-color:#00b894">
+<div class="card-title"><span style="font-size:1.2em">🎲</span> 草稿与版本管理</div>
+<p style="font-size:.9em;color:var(--muted)">多草稿生成 + 收藏 + 版本回溯。一套完整的对话分支管理能力，竞品无一提供。</p>
+</div>
+<div class="card" style="border-left-color:#0984e3">
+<div class="card-title"><span style="font-size:1.2em">💪</span> 三层记忆压缩</div>
+<p style="font-size:.9em;color:var(--muted)">轻量(10轮/200字) → 深度(50轮/2500字) → 史诗(200轮/5000字) 三级分层架构，由具体事件频次驱动压缩触发，而非简单的 Token 计数截断。上下文利用率远超所有竞品。</p>
+</div>
+</div>
+
+<!-- === 市场定位 === -->
+<h2>四、市场定位与竞品格局</h2>
+<div class="panel">
+<div class="compare">
+<div class="compare-col">
+<h4>👑 SillTavern（主导者）</h4>
+<ul>
+<li>约 80% 用户市场</li>
+<li>300+ 扩展的成熟生态</li>
+<li>chara_card_v2 事实标准</li>
+<li>优点：UI 完善、社区大</li>
+<li>局限：纯前端，无状态/规则</li>
+</ul>
+</div>
+<div class="compare-col">
+<h4>🥈 RisuAI / Agnai（挑战者）</h4>
+<ul>
+<li>各占 5-10% 用户</li>
+<li>部分 UI 特色功能</li>
+<li>同样纯前端无状态</li>
+<li>RisuAI 有 regex 脚本</li>
+<li>生态远不如 ST</li>
+</ul>
+</div>
+<div class="compare-col">
+<h4>⚡ Kernelsoul（颠覆者）</h4>
+<ul>
+<li>不是前端，是引擎</li>
+<li>不替代 ST，增强其能力</li>
+<li>插件模式安装到 ST</li>
+<li>独立运行 + SDK</li>
+<li>无竞品生态依赖</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- === 技术深度 === -->
+<h2>五、技术深度评估</h2>
+<div class="grid">
+<div class="card">
+<div class="card-title">语义叙事引擎</div>
+<table style="font-size:.85em;margin:0">
+<tr><td>语义轴构建</td><td><span class="tag tag-green">✓</span></td></tr>
+<tr><td>Gram 矩阵解耦</td><td><span class="tag tag-green">✓</span></td></tr>
+<tr><td>低维子空间</td><td><span class="tag tag-green">✓</span></td></tr>
+<tr><td>Warp 函数标定</td><td><span class="tag tag-green">✓</span></td></tr>
+<tr><td>语义动量(SLERP)</td><td><span class="tag tag-green">✓</span></td></tr>
+<tr><td>事实签名过滤</td><td><span class="tag tag-green">✓</span></td></tr>
+<tr><td>LLM 兜底生成</td><td><span class="tag tag-green">✓</span></td></tr>
+<tr><td>嵌入层接入</td><td><span class="tag tag-orange">待外部模型</span></td></tr>
+</table>
+</div>
+<div class="card">
+<div class="card-title">DSL 编译器</div>
+<table style="font-size:.85em;margin:0">
+<tr><td>递归下降解析</td><td><span class="tag tag-green">✓</span></td></tr>
+<tr><td>WHEN/IF/THEN/BECAUSE</td><td><span class="tag tag-green">✓</span></td></tr>
+<tr><td>变量系统</td><td><span class="tag tag-green">✓</span></td></tr>
+<tr><td>AI 协作编译</td><td><span class="tag tag-green">✓</span></td></tr>
+<tr><td>决策溯源</td><td><span class="tag tag-green">✓</span></td></tr>
+<tr><td>版本兼容</td><td><span class="tag tag-green">✓</span></td></tr>
+</table>
+</div>
+<div class="card">
+<div class="card-title">记忆与上下文</div>
+<table style="font-size:.85em;margin:0">
+<tr><td>三层分级压缩</td><td><span class="tag tag-green">✓</span></td></tr>
+<tr><td>分层合并算法</td><td><span class="tag tag-green">✓</span></td></tr>
+<tr><td>安全截断机制</td><td><span class="tag tag-green">✓</span></td></tr>
+<tr><td>手动记忆锚点</td><td><span class="tag tag-green">✓</span></td></tr>
+<tr><td>worldbook 融入</td><td><span class="tag tag-green">✓</span></td></tr>
+</table>
+</div>
+</div>
+
+<!-- === 版本时间线 === -->
+<h2>六、版本演进时间线</h2>
+<div class="panel">
+<div class="timeline">
+<div class="step"><div class="step-title">v1.0 — 诞生</div><div class="step-text">基础 GameState、AI 响应 schema、CLI 框架</div></div>
+<div class="step"><div class="step-title">v1.1-1.4 — 核心奠基</div><div class="step-text">强类型定义、双轨制、PathResolver、分级容错、三段式解析器</div></div>
+<div class="step"><div class="step-title">v1.5-1.6 — 可用性</div><div class="step-text">记忆锚点、角色卡加载器、草稿收藏、世界书二次检索、Token 预算</div></div>
+<div class="step"><div class="step-title">v2.0 — Kernelsoul 系统</div><div class="step-text">character_state、双层规则引擎、决策溯源、元认知预设</div></div>
+<div class="step"><div class="step-title">v2.1 — DSL 剧本语言</div><div class="step-text">SLL 语言、递归下降解析器、AI 协作编译</div></div>
+<div class="step"><div class="step-title">v2.3 — 工程化</div><div class="step-text">三条铁律、FileService、Python 实现全面落地</div></div>
+<div class="step"><div class="step-title">v2.3.1 — 记忆升级</div><div class="step-text">轻量+深度+史诗三层压缩、分层合并算法</div></div>
+<div class="step"><div class="step-title">v2.4 — 语义渲染</div><div class="step-text">语义轴/Warp/动量/Gram矩阵、三模式渲染、KNN 词库</div></div>
+</div>
+</div>
+
+<!-- === 限制与待改进 === -->
+<h2>七、当前限制与待改进</h2>
+<div class="panel">
+<div class="grid">
+<div class="card" style="border-left-color:var(--warn)">
+<div class="card-title">⚠️ 嵌入层待接入</div>
+<p style="font-size:.9em">语义引擎需要外部 embedding 模型（OpenAI text-embedding-3-small / BGE-Large-ZH），目前用 mock 函数占位。接入后可激活完整的语义空间。</p>
+</div>
+<div class="card" style="border-left-color:var(--warn)">
+<div class="card-title">⚠️ 前端缺失</div>
+<p style="font-size:.9em">CLI 模式已可用，但 gradio 前端已被放弃。需对接第三方前端（SillyTavern 插件模式是主要方案）或重建轻量 UI。</p>
+</div>
+<div class="card" style="border-left-color:var(--info)">
+<div class="card-title">🔜 生态建设</div>
+<p style="font-size:.9em">插件市场、gRPC API、Unity/Unreal SDK 在手册中规划但未实现。社区和生态是 Kernelsoul 能否从技术项目走向流行平台的关键。</p>
+</div>
+<div class="card" style="border-left-color:var(--info)">
+<div class="card-title">🔜 文档完备化</div>
+<p style="font-size:.9em">手册内容全面但偏实现细节，缺少面向非开发者的快速入门和角色创作者指南。</p>
+</div>
+</div>
+</div>
+
+<!-- === 结论 === -->
+<h2>八、综合结论</h2>
+<div class="panel">
+<p>Kernelsoul 在 AI 角色扮演领域拥有<strong>独一档的技术差异</strong>——它是唯一将游戏状态机、确定性规则引擎和语义叙事渲染管线和专业剧本 DSL 集成到单一引擎中的项目。</p>
+<br>
+<p><strong>核心价值判断：</strong></p>
+<table>
+<thead><tr><th>方面</th><th>评级</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>技术前瞻性</td><td><span class="tag tag-green">卓越</span></td><td>语义渲染管线行业首创，DSL 编译器独一无二</td></tr>
+<tr><td>代码质量</td><td><span class="tag tag-green">扎实</span></td><td>5856 行 Python，21 模块松耦合，181 测试全通</td></tr>
+<tr><td>文档质量</td><td><span class="tag tag-green">详尽</span></td><td>3408 行手册，21 章系统文档，完整版本记录</td></tr>
+<tr><td>生态成熟度</td><td><span class="tag tag-orange">早期</span></td><td>插件市场、SDK、前端集成待建设</td></tr>
+<tr><td>可用性</td><td><span class="tag tag-orange">开发上手</span></td><td>CLI 可用，需要前端/插件包装</td></tr>
+<tr><td>差异化</td><td><span class="tag tag-green">行业最强</span></td><td>6 项关键维度全部领先竞品</td></tr>
+</tbody>
+</table>
+<br>
+<div class="info">
+<strong>一句话结论：</strong>Kernelsoul 是 AI 角色扮演领域技术栈最完整的引擎，在状态管理、规则执行、语义渲染三个维度上全面领先现有竞品。当前处于<strong>"技术原型→产品化"</strong>的过渡阶段，嵌入层接入和前端集成是下一步关键缺口。
+</div>
+</div>
+
+<footer>
+<p>Kernelsoul 角色引擎评估报告 v2.4 — 2026-07-01</p>
+<p>基于 D:\V4-Character-OS\in-dev\ 代码 + 手册 | 竞品数据来源于公开资料</p>
+</footer>
+
+</div>
+</body>
+</html>

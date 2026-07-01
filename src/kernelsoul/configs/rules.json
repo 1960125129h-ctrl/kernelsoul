@@ -1,0 +1,29 @@
+{
+  "evolution_rules": [
+    {
+      "id": "dishonor_penalty",
+      "trigger_keywords": [
+        "偷袭",
+        "欺骗",
+        "背叛",
+        "说谎",
+        "暗算"
+      ],
+      "condition": {
+        "type": "gt",
+        "field": "hp",
+        "value": 0
+      },
+      "action": [
+        {
+          "type": "change_variable",
+          "target": "character_state.honor",
+          "delta": -30
+        }
+      ],
+      "description": "不义之举降低荣誉值",
+      "enabled": true
+    }
+  ],
+  "max_damage_per_turn": 50
+}

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kernelsoul v2.3.1 → v2.4 对比总结</title>
+<style>
+  :root { --bg:#0f1117; --card:#1a1d27; --border:#2a2d3a; --text:#c9d1d9; --muted:#6e7681; --green:#3fb950; --yellow:#d29922; --red:#f85149; --blue:#58a6ff; --purple:#bc8cff; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; padding:24px; max-width:1100px; margin:0 auto; }
+  h1 { font-size:28px; margin-bottom:4px; }
+  h2 { font-size:20px; margin:32px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+  h3 { font-size:16px; margin:16px 0 8px; color:var(--blue); }
+  .subtitle { color:var(--muted); margin-bottom:24px; }
+  .tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:600; }
+  .tag-new { background:#1a3a1e; color:var(--green); }
+  .tag-change { background:#3a2e0e; color:var(--yellow); }
+  .tag-same { background:#1a1d27; color:var(--muted); border:1px solid var(--border); }
+  table { width:100%; border-collapse:collapse; margin:12px 0; }
+  th, td { padding:8px 12px; text-align:left; font-size:13px; border-bottom:1px solid var(--border); }
+  th { color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:16px; margin:12px 0; }
+  .verdict { background:var(--card); border:1px solid var(--green); border-radius:8px; padding:20px; margin:16px 0; }
+  .verdict h3 { color:var(--green); margin:0 0 8px; }
+  .highlight { color:var(--yellow); font-weight:700; }
+  .compare-section { display:flex; gap:16px; margin:12px 0; }
+  .compare-col { flex:1; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:16px; }
+  .compare-col h4 { font-size:15px; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+  .compare-col ul { list-style:none; padding:0; font-size:13px; }
+  .compare-col li { padding:4px 0; }
+  .compare-col li::before { content:'• '; color:var(--blue); }
+  footer { text-align:center; color:var(--muted); font-size:12px; margin-top:48px; padding-top:24px; border-top:1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<h1>Kernelsoul</h1>
+<div class="subtitle">v2.3.1 → v2.4 版本对比总结 · 2026-07-01</div>
+
+<!-- OVERVIEW -->
+<h2>版本演进总览</h2>
+
+<table>
+<tr><th>维度</th><th>v2.3.1</th><th>v2.4</th><th>变化</th></tr>
+<tr><td>手册章节</td><td>20章</td><td>21章（+第二十一章）</td><td><span class="tag tag-new">+1章</span></td></tr>
+<tr><td>核心模块</td><td>17个</td><td>17个 + 3个语义模块</td><td><span class="tag tag-new">+3模块</span></td></tr>
+<tr><td>代码行数</td><td>~5,500</td><td>~6,500</td><td><span class="tag tag-change">+1,004行</span></td></tr>
+<tr><td>API端点</td><td>9个</td><td>11个（+render_mode查询/设置）</td><td><span class="tag tag-new">+2端点</span></td></tr>
+<tr><td>依赖</td><td>openai, httpx, fastapi</td><td>openai, httpx, fastapi, numpy</td><td><span class="tag tag-change">+numpy</span></td></tr>
+<tr><td>渲染模式</td><td>1种（数值直注）</td><td>3种（direct/semantic/hybrid）</td><td><span class="tag tag-new">+2模式</span></td></tr>
+<tr><td>角色配置</td><td>5种文件</td><td>6种文件（+character_semantic.json）</td><td><span class="tag tag-new">+1配置</span></td></tr>
+<tr><td>测试覆盖</td><td>18项</td><td>35项</td><td><span class="tag tag-change">+17项</span></td></tr>
+</table>
+
+<!-- WHAT'S NEW -->
+<h2>v2.4 新增：第二十一章 语义渲染引擎</h2>
+
+<div class="compare-section">
+<div class="compare-col">
+<h4>v2.3.1 状态处理方式</h4>
+<ul>
+<li>数值直接注入Prompt：<code>HP:85/100, emotion:angry</code></li>
+<li>模型自行理解数值含义</li>
+<li>状态变更依赖解析器事后提取</li>
+<li>无状态变化的"叙事引导"</li>
+<li>情感粒度约6种基础词</li>
+</ul>
+</div>
+<div class="compare-col">
+<h4>v2.4 语义渲染引擎</h4>
+<ul>
+<li>状态变化映射到嵌入向量空间</li>
+<li>语义轴：正/负锚点定义维度方向</li>
+<li>Warp标定：数值→语义的非线性映射</li>
+<li>SLERP状态更新：位置+强度双变量</li>
+<li>KNN短语检索：从语料库选最优叙事</li>
+<li>情感粒度12+种复杂词</li>
+</ul>
+</div>
+</div>
+
+<!-- V2.4 DETAIL -->
+<h2>新子系统详解</h2>
+
+<div class="card">
+<h3>21.2-21.3 数学框架</h3>
+<table>
+<tr><td>语义轴</td><td>Dᵢ = embed(正面锚) − embed(负面锚)，每个游戏维度一条轴</td></tr>
+<tr><td>状态点</td><td>z = r·p — 方向向量p + 强度标量r，在高维球面上移动</td></tr>
+<tr><td>Warp函数</td><td>数值Δv通过阶段密度曲线映射为语义Δt，临界区敏感性可调</td></tr>
+<tr><td>Gram矩阵</td><td>G = AᵀA 解耦坐标轴，τ(e) = G⁻¹Aᵀ(e−c) 投影到轴空间</td></tr>
+<tr><td>子空间</td><td>SVD降维到k=20维，忽略与游戏状态无关的嵌入维度</td></tr>
+<tr><td>SLERP</td><td>大角度用球面线性插值保证路径在球面上，小角度用余弦近似</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h3>21.4-21.5 渲染管线与语料库</h3>
+<table>
+<tr><td>事实标签</td><td>语料库中每条短语预计算在各轴上的坐标τ(s)，4条件冲突检测</td></tr>
+<tr><td>KNN检索</td><td>加权多因子排序：d_fact(事实准确)+d_style(风格)+d_momentum(动量)+d_history(去重)</td></tr>
+<tr><td>LLM降级</td><td>KNN无结果时组装ContextPacket→LLM生成新短语→准入审计</td></tr>
+<tr><td>Miss Buffer</td><td>记录检索失败的状态，DBSCAN聚类检测语料缺口，触发短语生成</td></tr>
+<tr><td>准入审计</td><td>5项校验：方向·覆盖·可逆性·冲突·风格，新短语需通过才能入库</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h3>21.6 集成与向后兼容</h3>
+<table>
+<tr><td>渲染模式</td><td><code>direct</code>（v2.3行为，默认）· <code>semantic</code>（全量语义）· <code>hybrid</code>（高权重维度语义+低权重数值）</td></tr>
+<tr><td>角色配置</td><td><code>character_semantic.json</code> — 定义每维度的正/负锚点文本、Warp阶段描述、设计权重</td></tr>
+<tr><td>API</td><td><code>POST /api/render_mode {"mode":"semantic"}</code> / <code>GET /api/render_mode</code></td></tr>
+<tr><td>位置</td><td>插入在规则执行之后、Prompt构造之前，direct模式下完全透传</td></tr>
+</table>
+</div>
+
+<!-- COMPARISON TABLE -->
+<h2>功能矩阵对比</h2>
+
+<table>
+<tr><th>功能</th><th>v2.3.1</th><th>v2.4</th></tr>
+<tr><td>GameState 状态机</td><td>✅</td><td>✅ 不变</td></tr>
+<tr><td>分层记忆压缩(3层)</td><td>✅ v2.3.1新增</td><td>✅ 不变</td></tr>
+<tr><td>DSL 规则引擎</td><td>✅</td><td>✅ 不变</td></tr>
+<tr><td>世界书检索</td><td>✅</td><td>✅ 不变</td></tr>
+<tr><td>进化触发</td><td>✅</td><td>✅ 不变</td></tr>
+<tr><td>插件钩子系统</td><td>✅</td><td>✅ 不变</td></tr>
+<tr><td>角色卡加载(V2/V3/Kernelsoul)</td><td>✅</td><td>✅ 不变</td></tr>
+<tr><td>SSE流式对话</td><td>✅</td><td>✅ 不变</td></tr>
+<tr><td>数值直注Prompt</td><td>✅ 唯一方式</td><td>✅ direct模式</td></tr>
+<tr><td>语义轴+向量投影</td><td>—</td><td><span class="tag tag-new">NEW</span></td></tr>
+<tr><td>Warp非线性映射</td><td>—</td><td><span class="tag tag-new">NEW</span></td></tr>
+<tr><td>SLERP状态更新</td><td>—</td><td><span class="tag tag-new">NEW</span></td></tr>
+<tr><td>语义动量追踪</td><td>—</td><td><span class="tag tag-new">NEW</span></td></tr>
+<tr><td>语料库+KNN检索</td><td>—</td><td><span class="tag tag-new">NEW</span></td></tr>
+<tr><td>Miss Buffer缺口检测</td><td>—</td><td><span class="tag tag-new">NEW</span></td></tr>
+<tr><td>三模式可切换</td><td>—</td><td><span class="tag tag-new">NEW</span></td></tr>
+<tr><td>character_semantic.json</td><td>—</td><td><span class="tag tag-new">NEW</span></td></tr>
+</table>
+
+<!-- VERDICT -->
+<div class="verdict">
+<h3>总结</h3>
+<p>v2.4 是 v2.3.1 的<strong>增量更新</strong>：所有 17 个核心模块保持不变，新增第二十一章"语义渲染引擎"作为可选子系统，通过 <code>/render_mode</code> 接口在 direct/semantic/hybrid 间切换，默认 direct 模式与 v2.3.1 行为完全一致。</p>
+<br>
+<p><strong>新增内容体量</strong>：1章手册规范 + 3个新模块（semantic_engine/renderer/phrase_library，1004行）+ 1个配置文件类型 + 2个API端点 + 17项测试。</p>
+<br>
+<p><strong>已知限制</strong>：语义渲染的数学核心（Gram矩阵·子空间投影·KNN检索）依赖embedding API，当前因DeepSeek不支持而处于待激活状态。向量空间层激活后预计叙事质量有进一步提升空间。</p>
+<br>
+<p><strong>向后兼容</strong>：v2.3.1 用户无需任何迁移——默认 direct 模式下行为完全不变，仅在主动调用 <code>/api/render_mode</code> 切换后才启用新功能。</p>
+</div>
+
+<footer>Kernelsoul v2.3.1 → v2.4 Version Comparison · 2026-07-01</footer>
+</body>
+</html>

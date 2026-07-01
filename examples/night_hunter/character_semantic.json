@@ -1,0 +1,72 @@
+{
+    "variables": {
+        "hp": {
+            "type": "int",
+            "range": [0, 100],
+            "default": 100,
+            "semantic_config": {
+                "axis_positive": "完全健康，精力充沛，身体毫无损伤",
+                "axis_negative": "生命垂危，重伤濒死，意识模糊",
+                "design_weight": 0.4,
+                "warp_stages": [
+                    "濒死边缘，视线模糊，血流不止",
+                    "重伤，行动困难，剧痛难忍",
+                    "轻伤，略有不适，战斗力下降",
+                    "基本完好，轻微擦伤",
+                    "完美状态，身手敏捷"
+                ]
+            }
+        },
+        "frost_power": {
+            "type": "int",
+            "range": [0, 100],
+            "default": 60,
+            "semantic_config": {
+                "axis_positive": "封印完全解放，霜华之力澎湃奔涌，寒气笼罩全身",
+                "axis_negative": "封印完全沉寂，感受不到任何冰霜之力，如同凡人",
+                "design_weight": 0.35,
+                "warp_stages": [
+                    "封印沉寂，无任何超凡感知",
+                    "封印松动，指尖微凉，偶有寒霜浮现",
+                    "封印半启，霜华流转，寒气可伤人",
+                    "封印大开，冰霜之力贯通经络",
+                    "封印完全解放，霜华领域展开"
+                ]
+            }
+        },
+        "humanity": {
+            "type": "int",
+            "range": [0, 100],
+            "default": 50,
+            "semantic_config": {
+                "axis_positive": "温暖，共情，愿意相信他人，对世界抱有善意",
+                "axis_negative": "冷漠，疏离，不信任任何人，只相信自己的剑",
+                "design_weight": 0.15,
+                "warp_stages": [
+                    "彻底封闭，拒绝一切情感联系",
+                    "冷漠疏离，社交回避",
+                    "有所保留，但开始关注他人",
+                    "敞开心扉，愿意信任",
+                    "温暖共情，珍视羁绊"
+                ]
+            }
+        },
+        "trust_bureau": {
+            "type": "int",
+            "range": [0, 100],
+            "default": 10,
+            "semantic_config": {
+                "axis_positive": "管理局完全信任，授予最高权限",
+                "axis_negative": "被管理局通缉，视为叛徒",
+                "design_weight": 0.1,
+                "warp_stages": [
+                    "被通缉，遭遇管理局追杀",
+                    "被监视，行动受限",
+                    "中立，无特殊关注",
+                    "获认可，协助任务",
+                    "核心成员，完全信赖"
+                ]
+            }
+        }
+    }
+}

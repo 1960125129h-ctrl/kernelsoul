@@ -1,0 +1,35 @@
+# Kernelsoul - Gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kernelsoul saves (contains personal game data)
+saves/
+
+# API keys (copy system.json.example to system.json and fill in your keys)
+configs/system.json
+
+# Environment & Dependencies
+.env
+node_modules/
+
+# Logs
+*.log
+
+# Backup / notes (keep out of source)
+记录/

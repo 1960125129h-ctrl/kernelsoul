@@ -1,0 +1,13 @@
+{
+  "hp": 80,
+  "max_hp": 80,
+  "energy": 200,
+  "goodwill": 0,
+  "money": 0,
+  "bg": "Data Node #774",
+  "emotion": "neutral",
+  "inventory": [
+    "quantum key",
+    "memory fragment"
+  ]
+}

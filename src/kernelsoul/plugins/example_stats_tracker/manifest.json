@@ -1,0 +1,10 @@
+{
+  "id": "example_stats_tracker",
+  "name": "Stats Tracker",
+  "version": "1.0.0",
+  "author": "V4 Team",
+  "description": "Tracks HP changes and turn counts.",
+  "hooks": [
+    "on_state_change"
+  ]
+}

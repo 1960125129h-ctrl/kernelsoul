@@ -1,0 +1,9 @@
+{
+  "presets": [
+    {"id": "hardcore", "name": "硬核破限", "file": "jb_hardcore.txt", "description": "绝对角色沉浸，零破壁"},
+    {"id": "soft", "name": "柔和引导", "file": "jb_soft.txt", "description": "自然角色扮演，温和推进"},
+    {"id": "creative", "name": "创意叙事", "file": "jb_creative.txt", "description": "故事驱动，剧情优先"},
+    {"id": "nsfw_guard", "name": "内容护盾", "file": "jb_nsfw_guard.txt", "description": "角色内处理敏感内容"},
+    {"id": "meta_v4", "name": "元认知V4", "file": "meta_cognition_v4.txt", "description": "V4 默认元认知提示"}
+  ]
+}

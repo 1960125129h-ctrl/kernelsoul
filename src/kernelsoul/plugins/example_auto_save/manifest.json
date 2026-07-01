@@ -1,0 +1,10 @@
+{
+  "id": "example_auto_save",
+  "name": "Auto Save",
+  "version": "1.0.0",
+  "author": "V4 Team",
+  "description": "Auto-saves state every 5 turns.",
+  "hooks": [
+    "on_turn_end"
+  ]
+}

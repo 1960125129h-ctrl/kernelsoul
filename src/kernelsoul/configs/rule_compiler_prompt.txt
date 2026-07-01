@@ -1,0 +1,22 @@
+﻿你是一个角色行为规则编译器。请根据以下角色描述，生成 V4 格式的 character_rules 和 conditional_memories JSON。
+
+角色描述：
+{character_description}
+
+请生成以下 JSON 结构（仅输出 JSON，不要解释）：
+
+1. character_rules: 规则数组，每条规则包含:
+   - id: 唯一标识符
+   - trigger: 触发条件描述
+   - trigger_keywords: 触发关键词列表
+   - condition: { type, field, value }
+   - actions: 动作数组
+   - description: 规则说明
+
+2. conditional_memories: 条件记忆数组，每条包含:
+   - id: 唯一标识符
+   - content: 记忆内容
+   - unlock_condition: { type, field, value }
+   - unlocked: false
+
+3. suggested_variables: 建议的角色状态变量定义

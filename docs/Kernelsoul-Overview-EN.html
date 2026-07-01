@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Kernelsoul — The Deterministic Engine for AI Character Roleplay</title>
+<style>
+:root{--bg:#f8f9fa;--card:#fff;--accent:#6c5ce7;--accent2:#00b894;--text:#2d3436;--muted:#636e72;--border:#e9ecef;--warn:#e17055;--info:#0984e3;--gold:#fdcb6e;--dark:#1a1a2e;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI','Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);line-height:1.8}
+.hero{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);color:#fff;padding:80px 20px 60px;text-align:center}
+.hero h1{font-size:3.2em;margin-bottom:8px;letter-spacing:-2px}
+.hero .sub{font-size:1.3em;opacity:.85;margin-bottom:12px}
+.hero .tagline{font-size:1.1em;opacity:.7;max-width:700px;margin:0 auto}
+.disclaimer{background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:14px 20px;margin:24px auto;max-width:960px;font-size:.9em;color:#856404}
+.container{max-width:960px;margin:0 auto;padding:0 20px}
+h2{font-size:1.8em;margin:48px 0 20px;color:var(--dark);border-bottom:3px solid var(--accent);padding-bottom:8px}
+h3{font-size:1.3em;margin:28px 0 12px;color:var(--accent)}
+p{margin:12px 0}
+.panel{background:var(--card);border-radius:12px;padding:24px;margin:20px 0;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.panel.hero-p{background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:#fff;padding:32px;border-radius:16px}
+.panel.hero-p .sub{opacity:.9;font-size:.95em}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:20px 0}
+.metric{background:var(--card);border-radius:10px;padding:20px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.metric .v{font-size:2.2em;font-weight:700;color:var(--accent)}
+.metric .l{font-size:.85em;color:var(--muted);margin-top:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin:20px 0}
+.card{background:var(--card);border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid var(--accent)}
+.card.green{border-left-color:var(--accent2)}
+.card.blue{border-left-color:var(--info)}
+.card.orange{border-left-color:var(--warn)}
+.card h4{font-size:1.1em;margin-bottom:8px;color:var(--accent)}
+.card ul{list-style:none;padding:0}
+.card ul li{padding:4px 0;font-size:.92em}
+.card ul li:before{content:"\2713 ";color:var(--accent2);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.92em}
+th{background:var(--accent);color:#fff;padding:10px 14px;text-align:left;font-weight:600}
+td{padding:10px 14px;border-bottom:1px solid var(--border)}
+tr:hover td{background:#f8f6ff}
+.tag{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.78em;font-weight:600}
+.tag-p{background:#f0edff;color:#6c5ce7}
+.tag-g{background:#e8f8f5;color:#00b894}
+.tag-b{background:#e3f2fd;color:#0984e3}
+.tag-o{background:#fef3e2;color:#e17055}
+.timeline{position:relative;padding-left:28px;margin:16px 0}
+.timeline:before{content:"";position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--border)}
+.step{position:relative;margin-bottom:16px}
+.step:before{content:"";position:absolute;left:-22px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid #fff}
+.step .t{font-weight:600;color:var(--accent);font-size:.95em}
+.step .d{font-size:.88em;color:var(--muted)}
+code{background:#f0edff;padding:2px 8px;border-radius:4px;font-size:.88em;color:var(--accent)}
+pre{background:#1a1a2e;color:#e0e0e0;padding:16px;border-radius:8px;overflow-x:auto;font-size:.85em;margin:12px 0}
+footer{text-align:center;padding:40px;color:var(--muted);font-size:.85em}
+.highlight{background:linear-gradient(120deg,rgba(108,92,231,.12),rgba(108,92,231,.05));padding:2px 6px;border-radius:4px;font-weight:500}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<h1>Kernelsoul</h1>
+<div class="sub">The Deterministic Engine for AI Character Roleplay</div>
+<div class="tagline">Insert a persistent state layer, a rule execution layer, and a semantic rendering pipeline between the LLM and the character card - transforming characters from "stories to be read" into "programs to be executed."</div>
+</div>
+
+<div class="container">
+
+<div class="disclaimer">
+<strong>⚠️ Translation Notice:</strong> The author is not a native English speaker. This document was translated from the original Chinese and may contain errors or awkward phrasings. If you spot issues, please open a PR or issue. The <a href="Kernelsoul-完整介绍.html">Chinese version</a> is the authoritative reference.
+</div>
+
+<div class="panel hero-p">
+<p><strong>Kernelsoul</strong> (formerly V4 Character OS) is an open-source AI character roleplay engine. It is not "yet another chat frontend" - it is a character operating system that lives downstream of the LLM, responsible for maintaining character state persistence, deterministic behavior rule execution, and semantically expressive narrative output.</p>
+</div>
+
+<!-- Metrics -->
+<div class="metrics">
+<div class="metric"><div class="v">5,856</div><div class="l">Lines of Code</div></div>
+<div class="metric"><div class="v">20</div><div class="l">Python Modules</div></div>
+<div class="metric"><div class="v">21</div><div class="l">Handbook Chapters</div></div>
+<div class="metric"><div class="v">181</div><div class="l">Tests Passing</div></div>
+<div class="metric"><div class="v">9</div><div class="l">Version Iterations</div></div>
+</div>
+
+<!-- Problem -->
+<h2>Why Kernelsoul?</h2>
+<div class="panel">
+<p>Traditional AI character roleplay pipelines look like this:</p>
+<pre>Character Card JSON → Prompt Assembly → LLM → Text Output</pre>
+<p>This model has three fundamental problems:</p>
+<div class="grid">
+<div class="card orange">
+<h4>No "State" for Characters</h4>
+<p style="font-size:.9em;color:var(--muted)">A character card is a static JSON file. HP, affinity, inventory items - all disappear after each conversation unless the LLM remembers them in the chat history (which LLMs are terrible at). The result is inconsistent character behavior.</p>
+</div>
+<div class="card orange">
+<h4>Rules Are "Probabilistic"</h4>
+<p style="font-size:.9em;color:var(--muted)">"Stay in character" or "remain cold" - these constraints live in character notes, but the LLM may or may not follow them. Roughly 20-30% of the time, it will ignore them.</p>
+</div>
+<div class="card orange">
+<h4>Naked Numeric State in Prompts</h4>
+<p style="font-size:.9em;color:var(--muted)">"HP: -12", "mood: 3" - these dry numbers are stuffed directly into the prompt without any narrative framing. The LLM must guess what "HP -12" looks like in story terms.</p>
+</div>
+</div>
+<p>Kernelsoul inserts dedicated middleware layers at every stage to solve these problems systematically.</p>
+</div>
+
+<!-- Architecture -->
+<h2>System Architecture</h2>
+<div class="panel">
+<pre>Character Card → State Layer → Rule Layer → Semantic Layer → Prompt → LLM
+(chara_v4)       GameState    DSL Engine    Semantic       Context    AI
++ DSL source     whitelist    WHEN-IF-      Renderer       Injection
+                 variables    THEN-BECAUSE  Axes/Warp/Momentum</pre>
+
+<div class="grid">
+<div class="card">
+<h4>⚙️ Engine Core Layer</h4>
+<ul>
+<li>KernelsoulEngine - main loop / dialog management</li>
+<li>GameState - strongly-typed game state</li>
+<li>CharacterStateManager - character-specific variables</li>
+<li>StateManager - persistence</li>
+</ul>
+</div>
+<div class="card green">
+<h4>📦 Character & Rules Layer</h4>
+<ul>
+<li>CharacterCardLoader - V1-V4 format loading</li>
+<li>DSLCompiler - SLL language parser</li>
+<li>RuleCompiler - AI-assisted rule compilation</li>
+<li>ParserEngine - AI response parsing</li>
+<li>EvolutionTrigger - rule evolution</li>
+</ul>
+</div>
+<div class="card blue">
+<h4>🧠 Semantic Pipeline Layer</h4>
+<ul>
+<li>SemanticEngine - axes/Warp/momentum/Gram matrices</li>
+<li>SemanticRenderer - 3-mode narrative rendering</li>
+<li>PhraseLibrary - KNN phrase management</li>
+</ul>
+</div>
+<div class="card">
+<h4>💾 Persistence & Context</h4>
+<ul>
+<li>MemoryManager - 3-tier hierarchical compression</li>
+<li>PathResolver - 41 path methods</li>
+<li>DraftManager - drafts & version management</li>
+<li>Context - context injection</li>
+</ul>
+</div>
+<div class="card green">
+<h4>🔌 Ecosystem Layer</h4>
+<ul>
+<li>PluginManager - sandbox/hook system</li>
+<li>AIBridge - API bridge</li>
+<li>WorldBookRetriever - lorebook retrieval</li>
+<li>api_server - REST API</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- Core Features -->
+<h2>Core Features</h2>
+
+<h3>1. Strongly-Typed GameState</h3>
+<div class="panel">
+<p>Characters are no longer flat JSON objects - they have runtime state objects with type constraints and read/write permissions:</p>
+<table>
+<tr><th>Field</th><th>Type</th><th>AI Writable</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>hp</code></td><td>int</td><td>✅</td><td>150</td><td>Hit points</td></tr>
+<tr><td><code>max_hp</code></td><td>int</td><td>❌</td><td>150</td><td>Read-only cap</td></tr>
+<tr><td><code>mood</code></td><td>int</td><td>✅</td><td>0</td><td>-5 to 5</td></tr>
+<tr><td><code>energy</code></td><td>int</td><td>✅</td><td>10</td><td>0 to 10</td></tr>
+<tr><td><code>is_alive</code></td><td>bool</td><td>⚠️</td><td>True</td><td>System protected</td></tr>
+<tr><td><code>inventory</code></td><td>list[str]</td><td>✅</td><td>[]</td><td>Item bag</td></tr>
+</table>
+</div>
+
+<h3>2. Deterministic DSL Rule Engine</h3>
+<div class="panel">
+<p>Kernelsoul defines its own domain-specific language - <strong>SLL (Kernelsoul Logic Language)</strong> - compiled by a recursive-descent parser into executable rule sets:</p>
+<pre>WHEN hp < 30:
+    IF has_potion:
+        USE potion
+        THEN "She uncorks a potion and drinks it in one gulp."
+        BECAUSE "Character uses healing items when in danger"
+    ELSE:
+        THEN "Her teeth clench as blood seeps through her fingers."
+        BECAUSE "Without resources, the character toughs it out"</pre>
+<p>The rule engine checks all WHEN conditions automatically after each turn. Matches are executed deterministically - no reliance on probabilistic LLM understanding.</p>
+</div>
+
+<h3>3. Semantic Narrative Rendering</h3>
+<div class="panel">
+<p>Instead of stuffing "mood: -2, energy: 8" into the prompt, the semantic renderer transforms numeric state into narrative descriptions - letting the LLM feel "atmosphere" rather than read "numbers."</p>
+<table>
+<tr><th>Mode</th><th>Behavior</th><th>Use Case</th></tr>
+<tr><td><span class="tag tag-b">direct</span></td><td>Raw numbers: HP: 35/150</td><td>Debug / minimal mode</td></tr>
+<tr><td><span class="tag tag-p">semantic</span></td><td>Narrative: condition fair but showing fatigue</td><td>Immersive RP</td></tr>
+<tr><td><span class="tag tag-g">hybrid</span></td><td>Numbers + narrative</td><td>Both readability & precision</td></tr>
+</table>
+<p>Under the hood: semantic axes, Warp functions (non-linear mapping), Gram matrices (axis decoupling), and SLERP interpolation.</p>
+</div>
+
+<h3>4. 3-Tier Memory</h3>
+<div class="panel">
+<table>
+<tr><th>Tier</th><th>Turns</th><th>Summary Limit</th><th>Trigger</th></tr>
+<tr><td><span class="tag tag-g">Light</span></td><td>10 turns</td><td>~200 chars</td><td>Every 5 turns</td></tr>
+<tr><td><span class="tag tag-b">Deep</span></td><td>50 turns</td><td>~2,500 chars</td><td>8 light summaries merged</td></tr>
+<tr><td><span class="tag tag-p">Epic</span></td><td>200 turns</td><td>~5,000 chars</td><td>32 deep summaries merged</td></tr>
+</table>
+</div>
+
+<h3>5. Decision Traceability</h3>
+<div class="panel">
+<pre>WHY character action:
+  → Rule: WHEN mood < -3 → hostile attitude
+  → State: mood -5 (HP loss + repeated frustration)
+  → Trigger: player provocation again
+  → Result: entered hostile mode, drew sword</pre>
+<p>This is a <span class="highlight">unique Kernelsoul capability</span> — no competitor offers traceable character behavior reasons.</p>
+</div>
+
+<!-- Comparison -->
+<h2>vs. The Competition</h2>
+<div class="panel">
+<table>
+<tr><th>Dimension</th><th>Kernelsoul</th><th>SillyTavern</th></tr>
+<tr><td><strong>Positioning</strong></td><td><span class="tag tag-p">Backend Engine</span></td><td><span class="tag tag-b">Chat Frontend</span></td></tr>
+<tr><td><strong>Character State</strong></td><td>Strongly-typed GameState, AI whitelist</td><td>Stateless, static JSON</td></tr>
+<tr><td><strong>Rule Execution</strong></td><td>Deterministic DSL engine, turn-level checks</td><td>Pure prompt hints, unreliable</td></tr>
+<tr><td><strong>Narrative Rendering</strong></td><td>Axes/Warp/Momentum/Gram matrices</td><td>Raw numeric output</td></tr>
+<tr><td><strong>DSL Language</strong></td><td>SLL recursive-descent parser</td><td>None</td></tr>
+<tr><td><strong>Decision Traceability</strong></td><td>WHY queries, decision logs</td><td>Black-box LLM output</td></tr>
+<tr><td><strong>Memory</strong></td><td>3-tier (10/50/200 turns)</td><td>Simple summary / vector ext.</td></tr>
+<tr><td><strong>Draft Management</strong></td><td>Multi-draft + bookmark + rollback</td><td>None</td></tr>
+<tr><td><strong>Character Format</strong></td><td>V4 standard + DSL source</td><td>chara_card_v2 (de facto)</td></tr>
+<tr><td><strong>Integration</strong></td><td>REST API / pip package / ST plugin</td><td>Standalone frontend</td></tr>
+</table>
+</div>
+
+<!-- Version Timeline -->
+<h2>Version History</h2>
+<div class="panel">
+<div class="timeline">
+<div class="step"><span class="t">v1.0 — Foundation</span><span class="d">GameState, AI response protocol, CLI framework</span></div>
+<div class="step"><span class="t">v1.1-1.4 — Core Building</span><span class="d">strong typing, dual mode, PathResolver, fault tolerance, 3-stage parser</span></div>
+<div class="step"><span class="t">v1.5-1.6 — Usability</span><span class="d">memory anchors, character loader, draft save, worldbook retrieval, token budget</span></div>
+<div class="step"><span class="t">v2.0 — Kernelsoul System</span><span class="d">character_state, dual rule engine, decision traceability, meta-cognition presets</span></div>
+<div class="step"><span class="t">v2.1 — DSL Scripting</span><span class="d">SLL language, recursive-descent parser, AI-assisted compilation</span></div>
+<div class="step"><span class="t">v2.3 — Engineering</span><span class="d">three iron laws, FileService, full Python implementation</span></div>
+<div class="step"><span class="t">v2.3.1 — Memory Upgrade</span><span class="d">3-tier compression: Light+Deep+Epic, hierarchical merge algorithm</span></div>
+<div class="step"><span class="t">v2.4 — Semantic Rendering</span><span class="d">Semantic narrative engine: axes/Warp/momentum/Gram matrices/3-mode/KNN</span></div>
+</div>
+</div>
+
+<footer>
+<p>Kernelsoul Character Engine — v2.4 · 2026-07-01</p>
+<p>Translation disclaimer: This page was machine-translated from Chinese. Errors may exist.</p>
+</footer>
+
+</div>
+</body>
+</html>

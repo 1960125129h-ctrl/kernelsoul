@@ -1,0 +1,12 @@
+# Kernelsoul - Dependencies
+# Core
+openai>=1.0.0          # OpenAI / DeepSeek API client
+httpx>=0.27.0          # Async HTTP
+
+# Optional: GUI support
+# gradio>=4.0.0        # Web UI
+# textual>=0.40.0      # Terminal UI
+
+# Dev
+pytest>=8.0.0
+numpy>=1.24.0

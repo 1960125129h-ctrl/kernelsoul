@@ -1,0 +1,13 @@
+{
+  "hp": 150,
+  "max_hp": 150,
+  "energy": 80,
+  "goodwill": -5,
+  "money": 500,
+  "bg": "Demon Hotel Lobby",
+  "emotion": "lazy",
+  "inventory": [
+    "hotel key",
+    "demon contract"
+  ]
+}

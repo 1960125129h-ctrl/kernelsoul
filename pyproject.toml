@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "kernelsoul"
+version = "2.4.0"
+description = "Modular AI character roleplay engine with state tracking, DSL rules, semantic rendering, and adaptive memory compression"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+keywords = ["ai", "roleplay", "character-engine", "narrative", "llm"]
+
+[project.urls]
+Homepage = "https://github.com/1960125129h-ctrl/Kernelsoul"
+Documentation = "https://github.com/1960125129h-ctrl/Kernelsoul/tree/main/docs"
+
+[tool.setuptools]
+packages = {find = {where = ["src"]}}
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

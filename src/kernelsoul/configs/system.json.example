@@ -1,0 +1,13 @@
+{
+    "api_type": "deepseek",
+    "api_key": "YOUR_API_KEY_HERE",
+    "api_base": "https://api.deepseek.com",
+    "model": "deepseek-chat",
+    "max_tokens": 4096,
+    "temperature": 0.8,
+    "max_context_tokens": 28672,
+    "token_estimation_method": "char_ratio",
+    "char_to_token_ratio": 0.5,
+    "last_character": "",
+    "last_session": ""
+}

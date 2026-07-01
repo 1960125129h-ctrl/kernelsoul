@@ -1,0 +1,16 @@
+# Kernelsoul - Dependencies
+# Core (engine runtime)
+openai>=1.0.0                               # OpenAI / DeepSeek API client
+httpx>=0.27.0                               # Async HTTP
+numpy>=1.24.0                               # Semantic engine (SLERP, SVD, Gram matrix)
+
+# API Server
+fastapi>=0.110.0                            # REST API
+uvicorn[standard]>=0.29.0                   # ASGI server
+
+# Development
+pytest>=8.0.0                               # Test framework
+
+# Optional: embedding for full semantic rendering
+# pip install openai    # text-embedding-3-small (OpenAI)
+# pip install sentence-transformers  # BGE-Large-ZH (local)
