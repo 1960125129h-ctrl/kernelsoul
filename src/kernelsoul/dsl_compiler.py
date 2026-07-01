@@ -586,7 +586,7 @@ class DSLCompiler:
 
             subs = [cls._decompile_condition(c) for c in cond.get("conditions", [])]
 
-            return f' {cond['type']} '.join(subs)
+            return f" {cond['type']} ".join(subs)
 
         field = cond.get("field", "?")
 
