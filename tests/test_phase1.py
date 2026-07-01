@@ -3,7 +3,7 @@ Kernelsoul - MVP Phase 1 Tests: GameState + PathResolver + StateManager + Sessio
 """
 import json, os, shutil, sys, tempfile, unittest
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'src', 'kernelsoul'))
 from game_state import GameState, load_state, save_state
 from path_resolver import PathResolver
 from state_manager import StateManager

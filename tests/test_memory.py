@@ -5,7 +5,7 @@ Mock standardization, round logic fix, assertion hardening.
 import json, os, shutil, sys, tempfile, unittest
 from unittest.mock import MagicMock
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'src', 'kernelsoul'))
 from path_resolver import PathResolver
 from memory_manager import MemoryManager
 

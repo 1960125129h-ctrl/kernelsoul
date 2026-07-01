@@ -1,7 +1,7 @@
 """test_worldbook.py - WorldBookRetriever tests"""
 import json, os, shutil, sys, tempfile, unittest
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'src', 'kernelsoul'))
 from worldbook_retriever import WorldBookRetriever, load_lorebook, load_from_character
 
 

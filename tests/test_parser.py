@@ -12,7 +12,7 @@ import os
 import os
 import unittest
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'src', 'kernelsoul'))
 
 from parser_engine import ParserEngine, parse_ai_response
 

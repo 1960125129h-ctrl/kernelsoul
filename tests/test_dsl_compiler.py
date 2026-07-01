@@ -3,7 +3,7 @@ test_dsl_compiler.py - DSL Compiler tests
 """
 import json, os, shutil, sys, tempfile, unittest
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'src', 'kernelsoul'))
 from dsl_compiler import DSLCompiler, DSLCompileError
 
 

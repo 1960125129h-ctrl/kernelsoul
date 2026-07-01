@@ -2,7 +2,7 @@
 test_character_loader.py - CharacterCardLoader tests (4 formats)
 """
 import json, os, shutil, sys, tempfile, unittest
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'src', 'kernelsoul'))
 from character_card_loader import CharacterCardLoader
 
 

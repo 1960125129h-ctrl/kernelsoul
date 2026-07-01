@@ -3,7 +3,7 @@ Tests for RuleCompiler (natural language -> DSL).
 """
 import unittest, sys, os, json, tempfile
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'src', 'kernelsoul'))
 
 # Mock AI bridge for testing
 class MockBridge:
